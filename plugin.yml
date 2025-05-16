@@ -1,0 +1,20 @@
+name: oblt-google-secrets
+description: Grant pipelines access to Google Cloud resources using Workload Identity Federation
+author: https://github.com/elastic
+public: true
+requirements:
+  - bash
+  - buildkite-agent
+  - gcloud
+configuration:
+  properties:
+    secret:
+      type: string
+    env-var:
+      type: string
+    project-id:
+      type: string
+  required:
+    - secret
+    - env-var
+  additionalProperties: false
