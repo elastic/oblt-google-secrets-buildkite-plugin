@@ -7,4 +7,4 @@ tests:
 
 .PHONY: lint
 lint:
-	@docker compose run lint
+	@docker compose run --rm lint

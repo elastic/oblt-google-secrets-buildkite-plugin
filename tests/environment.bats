@@ -3,7 +3,7 @@
 load "${BATS_PLUGIN_PATH}/load.bash"
 
 # Uncomment to enable stub debugging
-export GCLOUD_STUB_DEBUG=/dev/tty
+# export GCLOUD_STUB_DEBUG=/dev/tty
 # export BUILDKITE_AGENT_STUB_DEBUG=/dev/tty
 
 setup() {
@@ -43,6 +43,8 @@ setup() {
 
   assert_success
   assert_output --partial "Accessing Google secret"
+
+  unstub gcloud
 }
 
 
