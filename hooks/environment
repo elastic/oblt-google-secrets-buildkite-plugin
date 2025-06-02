@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+set -eo pipefail
+
+if [[ -z "${BUILDKITE_PLUGIN_OBLT_GOOGLE_SECRETS_SECRET}" ]]; then
+  echo "Parameter 'secret:' is required."
+  exit 1
+fi
+
+if [[ -z "${BUILDKITE_PLUGIN_OBLT_GOOGLE_SECRETS_ENV_VAR}" ]]; then
+  echo "Parameter 'env-var:' is required."
+  exit 1
+fi
+
+echo "~~~ :gcloud: Accessing Google secret"
+PROJECT_ID="${BUILDKITE_PLUGIN_OBLT_GOOGLE_SECRETS_PROJECT_ID:-"elastic-observability"}"
+secret=$(gcloud secrets versions access latest --secret="$BUILDKITE_PLUGIN_OBLT_GOOGLE_SECRETS_SECRET" --project="$PROJECT_ID")
+
+set +x
+echo "${secret}" | buildkite-agent redactor add
+
+eval "${BUILDKITE_PLUGIN_OBLT_GOOGLE_SECRETS_ENV_VAR}='${secret}'"
+export "${BUILDKITE_PLUGIN_OBLT_GOOGLE_SECRETS_ENV_VAR?}"
