@@ -1,13 +1,33 @@
-version: '3.7'
-
 services:
-  lint:
-    image: buildkite/plugin-linter:v2.1.0
-    command: ['--id', 'elastic/oblt-google-secrets']
+  plugin-lint:
+    image: buildkite/plugin-linter:v3.0.0
+    command: ['--id', 'elastic/oblt-google-secrets', '--path', '/plugin']
     volumes:
-      - ".:/plugin:ro"
+      - ".:/plugin:ro,z"
 
-  tests:
-    image: buildkite/plugin-tester
+  test:
+    command: ["bats", "--show-output-of-passing-tests", "--verbose-run", "tests/"]
+    image: buildkite/plugin-tester:v4.3.0
     volumes:
-      - '.:/plugin:ro'
+      - ".:/plugin:ro,z"
+
+  shellcheck:
+    image: koalaman/shellcheck-alpine:v0.11.0
+    entrypoint: ["sh", "-c"]
+    command: >
+      "
+      echo 'running shellcheck' ;
+      (find hooks .buildkite/scripts -type f 2>/dev/null | xargs shellcheck --shell=bash --external-sources --color=always --format=gcc) && echo 'shellcheck passed' || (echo 'shellcheck failed' && exit 1);
+      "
+    working_dir: /plugin
+    volumes:
+      - ".:/plugin:ro,z"
+
+  e2e-test:
+    image: buildkite/plugin-tester:v4.3.0
+    environment:
+      - GOOGLE_SECRET_VALUE
+    volumes:
+      - ".:/plugin:ro,z"
+    working_dir: /plugin
+    command: [".buildkite/scripts/test-e2e.sh"]
