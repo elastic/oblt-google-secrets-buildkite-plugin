@@ -1,4 +1,5 @@
 agents:
+  provider: gcp
   image: family/core-ubuntu-2204
 
 steps:
