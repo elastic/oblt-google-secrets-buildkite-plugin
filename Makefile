@@ -1,10 +1,18 @@
 .PHONY: all
-all: tests lint
+all: test plugin-lint shellcheck e2e-test
 
-.PHONY: tests
-tests:
-	@docker compose run --rm tests
+.PHONY: test
+test:
+	@docker compose run --rm test
 
-.PHONY: lint
-lint:
-	@docker compose run --rm lint
+.PHONY: plugin-lint
+plugin-lint:
+	@docker compose run --rm plugin-lint
+
+.PHONY: shellcheck
+shellcheck:
+	@docker compose run --rm shellcheck
+
+.PHONY: e2e-test
+e2e-test:
+	@docker compose run --rm e2e-test
